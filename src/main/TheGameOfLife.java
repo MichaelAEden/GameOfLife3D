@@ -1,6 +1,10 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
@@ -21,7 +25,7 @@ public class TheGameOfLife {
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		panel.requestFocusInWindow();
-		frame.setVisible(true);
+		frame.setVisible(true);		
 		
 		panel.run();
 	}

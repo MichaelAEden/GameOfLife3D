@@ -2,7 +2,12 @@ package gameState;
 
 import com.jogamp.opengl.GL2;
 
+import cellMap.Cell;
+import cellMap.CellMap;
+
 public class Player {
+	
+	private int cellId = Cell.CELL_GROWER_A.ID;
 	
 	private float rotateX;
 	private float rotateY;
@@ -38,12 +43,46 @@ public class Player {
 	 * Sets the rotation and position of the camera based on that
 	 * of the player.
 	 */
-	public void setRenderPerspective(GL2 gl) {		
-		gl.glTranslatef(x, y, z);
+	public void setRenderPerspective(GL2 gl, CellMap cellMap) {		
+		gl.glTranslatef(
+				x / (float) cellMap.getColumns(), 
+				y / (float) cellMap.getRows(), 
+				z / (float) cellMap.getDepth());
 		
 		gl.glRotatef(rotateZ, 0, 0, 1);
 		gl.glRotatef(rotateY, 0, 1, 0);
 		gl.glRotatef(rotateX, 1, 0, 0);
+	}
+	
+	/* Cell Placement Functions */
+	
+	/**
+	 * Switches cell being placed to the previous cell.
+	 */
+	public void prevCell() {
+		cellId--;
+		if (cellId < 1)
+			cellId = Cell.MAX_ID;
+	}
+	
+	/**
+	 * Switches cell being placed to the next cell.
+	 */
+	public void nextCell() {
+		cellId++;
+		if (cellId > Cell.MAX_ID)
+			cellId = 1;
+	}
+	
+	/**
+	 * Places cell in front of the player.
+	 */
+	public void placeCell(CellMap cellMap) {
+		System.out.println("X: " + x);
+		System.out.println("Y: " + y);
+		System.out.println("Z: " + z);
+		
+		cellMap.createCell((int)(x + 1), (int)y, (int)z, cellId);
 	}
 	
 	/* Speed, position, and rotation operations */
@@ -85,9 +124,9 @@ public class Player {
 	 * Resets the player to the origin.
 	 */
 	public void resetPosition() {		
-		x = 1;
+		x = 30;
 		y = 0;
-		z = -2;
+		z = -60;
 	}
 	
 	/**
@@ -110,4 +149,10 @@ public class Player {
 		rotateY = 180;
 		rotateZ = 0;
 	}
+	
+	/* Getters and Setters */
+	
+	public float getX() { return x; }
+	public float getY() { return y; }
+	public float getZ() { return z; }
 }

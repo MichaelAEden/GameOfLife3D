@@ -1,14 +1,15 @@
 package gameState;
 
-import java.awt.Point;
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import com.jogamp.opengl.GL2;
 
-import main.GamePanel;
 import cellMap.Cell;
 import cellMap.CellMap;
+import main.GamePanel;
 
 public class MainState extends GameState {
 	
@@ -18,18 +19,25 @@ public class MainState extends GameState {
 	private int updateRate = 3;
 	private boolean isPaused = true;
 		
-	private int cellId = Cell.CELL_GROWER_A.ID;
-
 	private Player player;
+	
+	// Mouse handling
+	private Robot robot;
 
 	public MainState(GameStateManager gsm) {
 		super(gsm);
 		
 		player = new Player();
-		cellMap = new CellMap(30, 30, 30, GamePanel.WIDTH, GamePanel.HEIGHT);
+		cellMap = new CellMap(30, 30, 30);
+		
+		try {
+			robot = new Robot();
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public void update() {
+	public void update() {		
 		player.update();
 		
 		if (!isPaused)
@@ -43,7 +51,7 @@ public class MainState extends GameState {
 	}
 
 	public void draw(GL2 gl) {
-		player.setRenderPerspective(gl);
+		player.setRenderPerspective(gl, cellMap);
 		cellMap.draw(gl);
 	}
 
@@ -60,21 +68,13 @@ public class MainState extends GameState {
 			}
 		}
 		
-		if(k == KeyEvent.VK_1) {
-			cellId++;
-			if (cellId > Cell.MAX_ID) {
-				cellId = 1;
-			}
-		}
-		if(k == KeyEvent.VK_2) {
-			cellId--;
-			if (cellId < 1) {
-				cellId = Cell.MAX_ID;
-			}
-		}
+		if(k == KeyEvent.VK_1)
+			player.nextCell();
+		if(k == KeyEvent.VK_2)
+			player.prevCell();
 		
 		float rotationFactor = 3;
-		float movementFactor = 0.01f;
+		float movementFactor = 0.1f;
 		
 		if ( k == KeyEvent.VK_W )
 			player.accelerate(0, 0, movementFactor);
@@ -104,8 +104,7 @@ public class MainState extends GameState {
 	}
 
 	public void mouseClicked(MouseEvent m) {
-		Point cell = cellMap.getCellFromMouse(m);
-		cellMap.createCell(15, 15, 15, cellId);
+		player.placeCell(cellMap);
 	}
 
 	@Override
@@ -115,9 +114,16 @@ public class MainState extends GameState {
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent m) {
-		// TODO Auto-generated method stub
-
+	public void mouseMoved(MouseEvent m) {		
+		float rotationFactor = 100f;
+		
+		player.rotate(
+				- (m.getY() - GamePanel.HEIGHT / 2) / (float) GamePanel.HEIGHT * rotationFactor,
+				(m.getX() - GamePanel.WIDTH / 2) / (float) GamePanel.WIDTH * rotationFactor,
+				0);
+		
+		// TODO: make this better
+		robot.mouseMove(GamePanel.WIDTH / 2, GamePanel.HEIGHT / 2 + 46);
 	}
 
 	@Override

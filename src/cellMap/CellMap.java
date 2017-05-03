@@ -1,22 +1,15 @@
 package cellMap;
 
 import java.awt.Color;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
 
 import com.jogamp.opengl.GL2;
 
-import main.GamePanel;
 import ui.Settings;
 
 /**
  * A map of living and dead cells.
  */
-public class CellMap {	
-	private int horizontalIndent;
-	private int verticalIndent;
-	private int width;
-	private int height;
+public class CellMap {
 	
 	private byte[][][] cellsState;
 	private int[][][] cellsAge;
@@ -39,21 +32,12 @@ public class CellMap {
 	 * @param width			Width of map, in pixels
 	 * @param height		Height of map, in pixels
 	 */
-	public CellMap(int columns, int rows, int depth, int width, int height)
-	{	
-		this.width = width;
-		this.height = height;
-		
-		this.cellSize = (width / (float)GamePanel.WIDTH) / columns;
-		
-		System.out.println(this.cellSize);
-		
+	public CellMap(int columns, int rows, int depth)
+	{
+		this.cellSize = 1.0f / columns;
 		this.columns = columns;
 		this.rows = rows;
 		this.depth = depth;
-				
-		horizontalIndent = 0;
-		verticalIndent = 0;
 		
 		init();
 	}
@@ -67,6 +51,10 @@ public class CellMap {
 		cellsAge = initIntGrid(0);
 		cellsGeneration = initIntGrid(0);
 		cellsType = initIntGrid(Cell.CELL_DEAD.ID);
+		
+		for (int i = 0; i <= 20; i++) {
+			Cell.CELL_BASIC.onCreation(this, i, i, i);
+		}
 	}
 	
 	/**
@@ -107,6 +95,8 @@ public class CellMap {
 	 * Called upon cell creation by user.
 	 */
 	public void createCell(int x, int y, int z, int type) {
+		System.out.println("Creating cell at: " + x + ", " + y + ", " + z);
+		
 		Cell.getCellFromId(type).onCreation(this, x, y, z);
 	}
 	
@@ -136,15 +126,7 @@ public class CellMap {
 			}
 		}
 		
-//		if (Settings.SHOW_GRID) {
-//			g.setColor(new Color(50, 50, 50));
-//			for(int x = 0; x <= columns; x++) {
-//				g.drawLine(getPixelFromCell(x, 0).x, verticalIndent, getPixelFromCell(x, 0).x, verticalIndent + height);
-//			}
-//			for(int y = 0; y <= rows; y++) {
-//				g.drawLine(horizontalIndent, getPixelFromCell(0, y, z).y, horizontalIndent + width, getPixelFromCell(0, y, z).y, z);
-//			}
-//		}
+		// TODO: add 3d grid option
 	}
 	
 	
@@ -258,14 +240,6 @@ public class CellMap {
 		return (x < columns && y < rows && z < depth) && (x >= 0 && y >= 0 && z >= 0);
 	}
 	
-	public Point getCellFromMouse(MouseEvent m)
-	{
-		int cx = (int)(((m.getX() - horizontalIndent) / (float)(GamePanel.WIDTH * GamePanel.SCALE)) * columns);
-		int cy = (int)(((m.getY() - verticalIndent) / (float)(GamePanel.WIDTH * GamePanel.SCALE)) * rows);
-				
-		return new Point(cx, cy);
-	}
-	
 	/* Cell Rendering Functions */
 	
 	private void square(GL2 gl, Color colour) {
@@ -371,4 +345,11 @@ public class CellMap {
 		
 		return array;
 	}
+	
+	/* Getters and Setters */
+	
+	public int getRows() { return rows; }
+	public int getColumns() { return columns; }
+	public int getDepth() { return depth; }
+	
 }

@@ -4,12 +4,15 @@ import gameState.GameStateManager;
 
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -18,6 +21,8 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
+
+// TODO: switch to LWJGL
 
 @SuppressWarnings("serial")
 public class GamePanel extends GLJPanel implements GLEventListener, MouseListener, MouseMotionListener, KeyListener {
@@ -32,7 +37,7 @@ public class GamePanel extends GLJPanel implements GLEventListener, MouseListene
 	public static final int SCALE = 1;
 	
 	// Game Thread
-	private int FPS = 60;
+	private int FPS = 30;
 	private static int ticks = 0;
 	
 	// Game State Manager
@@ -40,7 +45,6 @@ public class GamePanel extends GLJPanel implements GLEventListener, MouseListene
 	
 	// Rendering
 	private FPSAnimator animator;
-
 
 	/**
 	 * Constructor.
@@ -56,6 +60,7 @@ public class GamePanel extends GLJPanel implements GLEventListener, MouseListene
 		// Adding listeners
 		addGLEventListener(this);
 		addMouseListener(this);
+		addMouseMotionListener(this);
 		addKeyListener(this);
 		
 		// Creating an animator
@@ -148,10 +153,16 @@ public class GamePanel extends GLJPanel implements GLEventListener, MouseListene
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
-		gl.glEnable(GL.GL_DEPTH_TEST);
+		gl.glEnable(GL2.GL_DEPTH_TEST);
+		gl.glEnable(GL2.GL_DEPTH_CLAMP_NV);
 		gl.glEnable(GL2.GL_LIGHTING);
 		gl.glEnable(GL2.GL_LIGHT0);
 		gl.glEnable(GL2.GL_COLOR_MATERIAL);
+		
+		// Hide the cursor while it is in the window
+		BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
+				cursorImg, new Point(0, 0), "blank cursor"));
 	}
 	
 	@Override public void dispose(GLAutoDrawable arg0) {}
