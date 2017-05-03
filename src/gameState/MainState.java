@@ -26,7 +26,7 @@ public class MainState extends GameState {
 		super(gsm);
 		
 		player = new Player();
-		cellMap = new CellMap(20, 20, 20, GamePanel.WIDTH, GamePanel.HEIGHT);
+		cellMap = new CellMap(30, 30, 30, GamePanel.WIDTH, GamePanel.HEIGHT);
 	}
 
 	public void update() {
@@ -105,7 +105,7 @@ public class MainState extends GameState {
 
 	public void mouseClicked(MouseEvent m) {
 		Point cell = cellMap.getCellFromMouse(m);
-		cellMap.createCell(cell.x, cell.y, 5, cellId);
+		cellMap.createCell(15, 15, 15, cellId);
 	}
 
 	@Override
