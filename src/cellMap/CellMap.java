@@ -52,9 +52,11 @@ public class CellMap {
 		cellsGeneration = initIntGrid(0);
 		cellsType = initIntGrid(Cell.CELL_DEAD.ID);
 		
-		for (int i = 0; i <= 20; i++) {
-			Cell.CELL_BASIC.onCreation(this, i, i, i);
-		}
+		Cell.CELL_GROWER_B.onCreation(this, 15, 15, 15);
+		
+//		for (int i = 0; i <= 20; i++) {
+//			Cell.CELL_BASIC.onCreation(this, i, i, i);
+//		}
 	}
 	
 	/**

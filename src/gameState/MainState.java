@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 
 import com.jogamp.opengl.GL2;
 
-import cellMap.Cell;
 import cellMap.CellMap;
 import main.GamePanel;
 
@@ -77,9 +76,9 @@ public class MainState extends GameState {
 		float movementFactor = 0.1f;
 		
 		if ( k == KeyEvent.VK_W )
-			player.accelerate(0, 0, movementFactor);
+			player.accelerate(1);
 		else if ( k == KeyEvent.VK_S )
-			player.accelerate(0, 0, -movementFactor);
+			player.accelerate(-1);
 		else if ( k == KeyEvent.VK_A )
 			player.accelerate(movementFactor, 0, 0);
 		else if ( k == KeyEvent.VK_D )
@@ -122,8 +121,10 @@ public class MainState extends GameState {
 				(m.getX() - GamePanel.WIDTH / 2) / (float) GamePanel.WIDTH * rotationFactor,
 				0);
 		
-		// TODO: make this better
-		robot.mouseMove(GamePanel.WIDTH / 2, GamePanel.HEIGHT / 2 + 46);
+		// Re-centers the mouse
+		robot.mouseMove(
+				m.getXOnScreen() - m.getX() + GamePanel.WIDTH / 2, 
+				m.getYOnScreen() - m.getY() + GamePanel.HEIGHT / 2);
 	}
 
 	@Override

@@ -21,6 +21,8 @@ public class Player {
 	private float vy;
 	private float vz;
 	
+	private float accelRate = 0.1f;
+	private float rotateRate = 0.1f;
 	private float slownessFactor = 0.95f;
 	
 	public Player() {
@@ -44,14 +46,14 @@ public class Player {
 	 * of the player.
 	 */
 	public void setRenderPerspective(GL2 gl, CellMap cellMap) {		
+		gl.glRotatef(rotateZ, 0, 0, 1);
+		gl.glRotatef(rotateY, 0, 1, 0);
+		gl.glRotatef(rotateX, 1, 0, 0);
+		
 		gl.glTranslatef(
 				x / (float) cellMap.getColumns(), 
 				y / (float) cellMap.getRows(), 
 				z / (float) cellMap.getDepth());
-		
-		gl.glRotatef(rotateZ, 0, 0, 1);
-		gl.glRotatef(rotateY, 0, 1, 0);
-		gl.glRotatef(rotateX, 1, 0, 0);
 	}
 	
 	/* Cell Placement Functions */
@@ -82,10 +84,29 @@ public class Player {
 		System.out.println("Y: " + y);
 		System.out.println("Z: " + z);
 		
-		cellMap.createCell((int)(x + 1), (int)y, (int)z, cellId);
+		Cell.getCellFromId(cellId).onCreation(cellMap, 15, 15, 15);
+
+		//cellMap.createCell((int)(x + 1), (int)y, (int)z, cellId);
 	}
 	
 	/* Speed, position, and rotation operations */
+	
+	/**
+	 * Accelerate the player in the direction they are facing.
+	 */
+	public void accelerate(float accelFactor) {
+		double radRotateX = Math.toRadians(rotateX);
+		double radRotateY = Math.toRadians(rotateY);
+		
+		double dx = Math.sin(radRotateY);
+		double dy = Math.sin(radRotateX);
+		//double dz = Math.cos(radRotateX) + Math.cos(radRotateY);
+		
+		accelerate(
+				(float)dx * accelRate * accelFactor,
+				(float)dy * accelRate * accelFactor,
+				(float)0 * accelRate * accelFactor);
+	}
 	
 	/**
 	 * Accelerate the player by a set amount of cells/s^2.
@@ -124,9 +145,9 @@ public class Player {
 	 * Resets the player to the origin.
 	 */
 	public void resetPosition() {		
-		x = 30;
+		x = 0;
 		y = 0;
-		z = -60;
+		z = 0;
 	}
 	
 	/**
@@ -146,7 +167,7 @@ public class Player {
 	 */
 	public void resetRotation() {
 		rotateX = 0;
-		rotateY = 180;
+		rotateY = 0;
 		rotateZ = 0;
 	}
 	

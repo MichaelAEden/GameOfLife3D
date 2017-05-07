@@ -32,6 +32,7 @@ public class GamePanel extends GLJPanel implements GLEventListener, MouseListene
 	// Dimensions
 	public static final int WIDTH = (int) screenSize.getWidth();
 	public static final int HEIGHT = (int) screenSize.getHeight();
+	
 	public static final String TITLE = "The Game of Life";
 	public static final int FULLSCREEN = 0;	// 1 if full screen, 0 otherwise
 	public static final int SCALE = 1;
